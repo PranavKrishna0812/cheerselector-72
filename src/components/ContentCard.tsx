@@ -4,7 +4,10 @@ import { useEmotion } from '@/contexts/EmotionContext';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { motion } from 'framer-motion';
+import { Heart, MessageSquare, Send, MoreHorizontal, UserPlus } from 'lucide-react';
 import TriggerWarning from './TriggerWarning';
+import CommentSection from './CommentSection';
+import { toast } from "sonner";
 
 export interface ContentItem {
   id: string;
@@ -29,9 +32,24 @@ const ContentCard: React.FC<ContentCardProps> = ({ content }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [showContent, setShowContent] = useState(!content.triggerWarning);
   const [isShowingWarning, setIsShowingWarning] = useState(content.triggerWarning);
+  const [isFollowing, setIsFollowing] = useState(false);
   
   const handleLike = () => {
     setIsLiked(!isLiked);
+  };
+  
+  const handleFollow = () => {
+    setIsFollowing(!isFollowing);
+    if (!isFollowing) {
+      toast(`Now following ${content.username}`, {
+        description: "You'll see their posts in your feed.",
+        duration: 3000,
+      });
+    } else {
+      toast(`Unfollowed ${content.username}`, {
+        duration: 2000,
+      });
+    }
   };
   
   const handleShowContent = () => {
@@ -65,14 +83,34 @@ const ContentCard: React.FC<ContentCardProps> = ({ content }) => {
       transition={{ duration: 0.4 }}
     >
       <div className="p-4 border-b border-gray-100">
-        <div className="flex items-center">
-          <Avatar className="h-9 w-9 mr-3">
-            <AvatarImage src={content.userAvatar} alt={content.username} />
-            <AvatarFallback>{content.username.charAt(0)}</AvatarFallback>
-          </Avatar>
-          <div>
-            <div className="font-medium text-sm">{content.username}</div>
-            <div className="text-xs text-gray-500">{content.timeAgo}</div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Avatar className="h-9 w-9 mr-3">
+              <AvatarImage src={content.userAvatar} alt={content.username} />
+              <AvatarFallback>{content.username.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <div>
+              <div className="font-medium text-sm">{content.username}</div>
+              <div className="text-xs text-gray-500">{content.timeAgo}</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className={`text-xs px-3 py-1 h-7 rounded-full ${isFollowing ? 'bg-blue-50 text-blue-500 border-blue-200' : ''}`}
+              onClick={handleFollow}
+            >
+              {isFollowing ? 'Following' : (
+                <>
+                  <UserPlus className="h-3 w-3 mr-1" />
+                  Follow
+                </>
+              )}
+            </Button>
+            <Button variant="ghost" size="icon" className="h-8 w-8">
+              <MoreHorizontal className="h-5 w-5" />
+            </Button>
           </div>
         </div>
       </div>
@@ -91,26 +129,16 @@ const ContentCard: React.FC<ContentCardProps> = ({ content }) => {
             className={`transition-transform duration-300 ${isLiked ? 'text-red-500 scale-110' : 'text-gray-700'}`} 
             onClick={handleLike}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" 
-                 viewBox="0 0 20 20" fill={isLiked ? "currentColor" : "none"} 
-                 stroke="currentColor" strokeWidth={isLiked ? "0" : "1.5"}>
-              <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-            </svg>
+            <Heart className="h-7 w-7" fill={isLiked ? "currentColor" : "none"} />
           </button>
           <button className="text-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
+            <MessageSquare className="h-7 w-7" />
           </button>
           <button className="text-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-            </svg>
+            <Send className="h-7 w-7" />
           </button>
           <div className="ml-auto">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
-            </svg>
+            <MoreHorizontal className="h-7 w-7" />
           </div>
         </div>
         
@@ -121,15 +149,15 @@ const ContentCard: React.FC<ContentCardProps> = ({ content }) => {
           <span className="text-sm">{content.caption}</span>
         </div>
         
-        <div className="text-xs text-gray-500 mb-2">View all {content.comments} comments</div>
-        
         {content.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-3">
+          <div className="flex flex-wrap gap-1 mt-2 mb-3">
             {content.tags.map(tag => (
               <span key={tag} className="text-xs text-blue-500">#{tag} </span>
             ))}
           </div>
         )}
+        
+        <CommentSection postId={content.id} />
       </div>
     </motion.div>
   );

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import ContentCard, { type ContentItem } from './ContentCard';
 import { useEmotion } from '@/contexts/EmotionContext';
@@ -209,7 +208,7 @@ const emotionSpecificContent: { [key: string]: ContentItem[] } = {
       caption: "Celebrating life's little victories today! What are you grateful for?",
       likes: 1543,
       comments: 127,
-      tags: ['celebration', 'gratitude', 'joy', 'happiness'],
+      tags: ['celebration', 'gratitude', 'joy', 'happiness', 'achievement'],
     },
     {
       id: '17',
@@ -221,6 +220,17 @@ const emotionSpecificContent: { [key: string]: ContentItem[] } = {
       likes: 2189,
       comments: 93,
       tags: ['adventure', 'roadtrip', 'friends', 'spontaneous'],
+    },
+    {
+      id: '18',
+      username: 'achievement_unlocked',
+      userAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=1000&auto=format&fit=crop',
+      timeAgo: '3 hours ago',
+      image: 'https://images.unsplash.com/photo-1621274282490-77c7a92476f8?q=80&w=1470&auto=format&fit=crop',
+      caption: "Just got my first promotion at work! Hard work finally paid off! 🏆",
+      likes: 1876,
+      comments: 145,
+      tags: ['achievement', 'career', 'celebration', 'success', 'trophy'],
     }
   ]
 };

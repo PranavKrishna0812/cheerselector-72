@@ -10,6 +10,13 @@ export interface Emotion {
   mood: Mood;
 }
 
+export interface Friend {
+  id: string;
+  username: string;
+  avatar: string;
+  isFollowing: boolean;
+}
+
 interface EmotionContextType {
   selectedMood: Mood | null;
   selectedEmotion: Emotion | null;
@@ -19,6 +26,8 @@ interface EmotionContextType {
   getEmotionsByMood: (mood: Mood) => Emotion[];
   clearEmotionSelection: () => void;
   isEmotionSelected: boolean;
+  friends: Friend[];
+  toggleFriend: (friendId: string) => void;
 }
 
 const emotions: Emotion[] = [
@@ -58,12 +67,21 @@ const emotions: Emotion[] = [
   { id: 'focused', name: 'Focused', mood: 'neutral' },
 ];
 
+// Sample friends data
+const sampleFriends: Friend[] = [
+  { id: '1', username: 'nature_explorer', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3', isFollowing: false },
+  { id: '2', username: 'food_lover', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000&auto=format&fit=crop', isFollowing: false },
+  { id: '3', username: 'travel_addict', avatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=1000&auto=format&fit=crop', isFollowing: false },
+  { id: '4', username: 'mindfulness_daily', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000&auto=format&fit=crop', isFollowing: false },
+];
+
 const EmotionContext = createContext<EmotionContextType | undefined>(undefined);
 
 export const EmotionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [selectedMood, setSelectedMood] = useState<Mood | null>(null);
   const [selectedEmotion, setSelectedEmotion] = useState<Emotion | null>(null);
   const [isEmotionSelected, setIsEmotionSelected] = useState<boolean>(false);
+  const [friends, setFriends] = useState<Friend[]>(sampleFriends);
 
   const getEmotionsByMood = (mood: Mood) => {
     return emotions.filter(emotion => emotion.mood === mood);
@@ -73,6 +91,14 @@ export const EmotionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setSelectedMood(null);
     setSelectedEmotion(null);
     setIsEmotionSelected(false);
+  };
+  
+  const toggleFriend = (friendId: string) => {
+    setFriends(friends.map(friend => 
+      friend.id === friendId 
+        ? { ...friend, isFollowing: !friend.isFollowing } 
+        : friend
+    ));
   };
 
   useEffect(() => {
@@ -110,7 +136,9 @@ export const EmotionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         emotions,
         getEmotionsByMood,
         clearEmotionSelection,
-        isEmotionSelected
+        isEmotionSelected,
+        friends,
+        toggleFriend
       }}
     >
       {children}
